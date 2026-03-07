@@ -3,10 +3,12 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
+import { createRequire } from 'module';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const require = createRequire(import.meta.url);
 
 // Database connection with caching for serverless
 let cachedDb = null;
@@ -18,9 +20,9 @@ async function connectDatabase() {
   }
 
   try {
-    // Dynamic imports for models
-    const { default: Product } = await import('../health-first-backend/health-first-backend/models/Product.js');
-    const { default: User } = await import('../health-first-backend/health-first-backend/models/User.js');
+    // Use require for CommonJS modules
+    const Product = require('../health-first-backend/health-first-backend/models/Product.js');
+    const User = require('../health-first-backend/health-first-backend/models/User.js');
     
     const db = await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 5000,
@@ -56,6 +58,7 @@ async function connectDatabase() {
           password: hashedPassword,
           role: "admin"
         });
+        console.log("✅ Admin user created");
       } else {
         let shouldSave = false;
         if (existingAdmin.role !== "admin") {
@@ -71,6 +74,7 @@ async function connectDatabase() {
 
         if (shouldSave) {
           await existingAdmin.save();
+          console.log("✅ Admin user updated");
         }
       }
     }
@@ -104,12 +108,12 @@ async function getApp() {
 
   app.use(express.json());
 
-  // Dynamic imports for routes
-  const { default: authRoutes } = await import('../health-first-backend/health-first-backend/routes/auth.js');
-  const { default: productsRoutes } = await import('../health-first-backend/health-first-backend/routes/products.js');
-  const { default: ordersRoutes } = await import('../health-first-backend/health-first-backend/routes/orders.js');
-  const { default: adminRoutes } = await import('../health-first-backend/health-first-backend/routes/admin.js');
-  const { default: paymentsRoutes } = await import('../health-first-backend/health-first-backend/routes/payments.js');
+  // Use require for CommonJS route modules
+  const authRoutes = require('../health-first-backend/health-first-backend/routes/auth.js');
+  const productsRoutes = require('../health-first-backend/health-first-backend/routes/products.js');
+  const ordersRoutes = require('../health-first-backend/health-first-backend/routes/orders.js');
+  const adminRoutes = require('../health-first-backend/health-first-backend/routes/admin.js');
+  const paymentsRoutes = require('../health-first-backend/health-first-backend/routes/payments.js');
 
   app.use("/api/auth", authRoutes);
   app.use("/api/products", productsRoutes);
@@ -118,7 +122,13 @@ async function getApp() {
   app.use("/api/payments", paymentsRoutes);
 
   app.get("/api", (req, res) => {
-    res.json({ message: "HealthFirst API Running 🚀" });
+    res.json({ message: "HealthFirst API Running 🚀", routes: ["auth", "products", "orders", "admin", "payments"] });
+  });
+
+  // Error handling
+  app.use((err, req, res, next) => {
+    console.error("Express error:", err);
+    res.status(500).json({ error: "Internal server error", message: err.message });
   });
   
   return app;
@@ -127,11 +137,16 @@ async function getApp() {
 // Serverless function handler
 export default async function handler(req, res) {
   try {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     await connectDatabase();
     const expressApp = await getApp();
     return expressApp(req, res);
   } catch (error) {
     console.error("Function error:", error);
-    return res.status(500).json({ error: "Internal server error", message: error.message });
+    return res.status(500).json({ 
+      error: "Internal server error", 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 }
