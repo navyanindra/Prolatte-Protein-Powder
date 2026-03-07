@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Phone, MapPin, ArrowRight, ShieldCheck, Chrome, Github } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 import { useGlobal } from '../App';
 import api from '../src/services/api';
 import { isValidPhone, normalizePhone } from '../src/utils/validation';
+import AlertModal from '../src/components/AlertModal';
 
 const Register: React.FC = () => {
   const { login } = useGlobal();
@@ -13,18 +14,35 @@ const Register: React.FC = () => {
     name: '',
     email: '',
     password: '',
-    phone: '',
-    street: ''
+    phone: ''
   });
+  const [alertModal, setAlertModal] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error' | 'info';
+    title?: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    message: ''
+  });
+
+  const showAlert = (message: string, type: 'success' | 'error' | 'info' = 'error', title?: string) => {
+    setAlertModal({ isOpen: true, type, message, title });
+  };
+
+  const closeAlert = () => {
+    setAlertModal({ ...alertModal, isOpen: false });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.password || !formData.phone) {
-      alert('Please fill in all required fields.');
+      showAlert('Please fill in all required fields.', 'error', 'Missing Information');
       return;
     }
     if (!isValidPhone(formData.phone)) {
-      alert('Please enter a valid phone number (10-15 digits).');
+      showAlert('Please enter a valid 10-digit phone number.', 'error', 'Invalid Phone Number');
       return;
     }
 
@@ -58,7 +76,7 @@ const Register: React.FC = () => {
       navigate('/');
     } catch (err: any) {
       const message = err?.response?.data?.message || 'Registration failed. Please try again.';
-      alert(message);
+      showAlert(message, 'error', 'Registration Failed');
     }
   };
 
@@ -135,20 +153,6 @@ const Register: React.FC = () => {
                   />
                 </div>
               </div>
-
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-4">Street Address</label>
-                <div className="relative">
-                  <MapPin size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input 
-                    type="text" 
-                    value={formData.street}
-                    onChange={(e) => setFormData({...formData, street: e.target.value})}
-                    className="w-full pl-14 pr-6 py-4 rounded-2xl bg-gray-50 border-none text-lg font-bold outline-none focus:ring-2 focus:ring-[#0369a1] transition"
-                    placeholder="Enter Your Address"
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="flex items-start space-x-3 ml-4">
@@ -164,27 +168,19 @@ const Register: React.FC = () => {
             </button>
           </form>
 
-          <div className="relative flex items-center justify-center">
-             <div className="absolute w-full h-px bg-gray-100"></div>
-             <span className="relative bg-white px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Or Sign Up With</span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-             <button className="flex items-center justify-center space-x-3 py-4 border-2 border-gray-100 rounded-2xl hover:border-[#0369a1]/20 hover:bg-gray-50 transition">
-                <Chrome size={20} className="text-red-500" />
-                <span className="font-black text-gray-900">Google</span>
-             </button>
-             {/*<button className="flex items-center justify-center space-x-3 py-4 border-2 border-gray-100 rounded-2xl hover:border-[#0369a1]/20 hover:bg-gray-50 transition">
-                <Github size={20} className="text-gray-900" />
-                <span className="font-black text-gray-900">Github</span>
-             </button>*/}
-          </div>
-
           <p className="text-center text-sm font-bold text-gray-500">
             Already have an account? <Link to="/login" className="primary-text underline decoration-2 underline-offset-4">Sign In</Link>
           </p>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={closeAlert}
+        type={alertModal.type}
+        title={alertModal.title}
+        message={alertModal.message}
+      />
     </div>
   );
 };

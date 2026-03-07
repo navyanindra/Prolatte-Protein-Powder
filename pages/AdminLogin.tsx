@@ -60,7 +60,7 @@ const AdminLogin: React.FC = () => {
           </div>
           <h1 className="text-2xl font-black text-gray-900">Admin Portal Access</h1>
           <p className="text-sm text-gray-500 font-medium">
-            OTP is temporarily disabled for testing.
+            Sign in with admin email and password.
           </p>
         </div>
 

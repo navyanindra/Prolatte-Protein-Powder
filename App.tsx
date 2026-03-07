@@ -207,7 +207,7 @@ const App: React.FC = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/confirmation/:id" element={user ? <OrderConfirmation /> : <Navigate to="/login" replace />} />
-            <Route path="/confirmation-preview" element={<OrderConfirmation />} />
+            {/* <Route path="/confirmation-preview" element={<OrderConfirmation />} /> */}
             <Route path="/flipkart" element={<ExternalRedirect to={FLIPKART_PRODUCT_URL} />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />

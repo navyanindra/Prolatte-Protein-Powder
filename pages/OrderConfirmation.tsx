@@ -287,23 +287,15 @@ const OrderConfirmation: React.FC = () => {
     const logoDataUrl = await loadImageAsDataUrl("/logo.png");
     const signDataUrl = await loadImageAsDataUrl(digitalSign);
     if (logoDataUrl) {
-      doc.addImage(logoDataUrl, "PNG", outerX + 12, headerY + 18, 74, 56);
+      // Keep logo proportions closer to the website header for a cleaner look.
+      doc.addImage(logoDataUrl, "PNG", outerX + 16, headerY + 22, 126, 42);
     }
 
-    // Left half: logo + brand + invoice number
+    // Left half: logo + invoice number only
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(3, 105, 161);
-    doc.text("HealthFirst Life Sciences", outerX + 98, headerY + 34);
-    doc.setFont("helvetica", "normal");
     doc.setTextColor(17, 24, 39);
-    doc.setFontSize(9);
-    doc.text("Tax Invoice", outerX + 98, headerY + 48);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("Invoice No.", outerX + 98, headerY + 72);
-    doc.setFontSize(14);
-    doc.text(String(orderRef), outerX + 98, headerY + 94);
+    doc.setFontSize(11);
+    doc.text(`Invoice No: ${String(orderRef)}`, outerX + 16, headerY + 100);
 
     // Right half: address + invoice date only
     const rightBlockX = outerX + halfW + 14;
@@ -341,8 +333,8 @@ const OrderConfirmation: React.FC = () => {
     doc.setFontSize(9);
     doc.text(`Address: ${order.address}`, outerX + 8, partyY + 52, { maxWidth: halfW - 16 });
     doc.text(`Address: ${order.address}`, outerX + halfW + 8, partyY + 52, { maxWidth: halfW - 16 });
-    doc.text(`Phone: ${order.phone || "-"}`, outerX + 8, partyY + 78);
-    doc.text(`Phone: ${order.phone || "-"}`, outerX + halfW + 8, partyY + 78);
+    doc.text(`Phone: ${order.phone ? `+91 ${order.phone}` : "-"}`, outerX + 8, partyY + 78);
+    doc.text(`Phone: ${order.phone ? `+91 ${order.phone}` : "-"}`, outerX + halfW + 8, partyY + 78);
     doc.text(`Estimated Delivery: ${estimatedDeliveryDate}`, outerX + 8, partyY + 92);
     doc.text(`Payment: ${paymentTypeLabel} (${order.paymentStatus})`, outerX + halfW + 8, partyY + 92);
 
@@ -357,7 +349,7 @@ const OrderConfirmation: React.FC = () => {
         hsnCode,
         `${qty} JAR`,
         Number(rateIncl).toLocaleString("en-IN"),
-        Number(amount).toLocaleString("en-IN")
+        formatRupee(amount)
       ];
     });
 
@@ -404,12 +396,29 @@ const OrderConfirmation: React.FC = () => {
         lineColor: [30, 41, 59],
         lineWidth: 0.8,
         textColor: [17, 24, 39],
-        cellPadding: 6,
+        cellPadding: { top: 6, right: 10, bottom: 6, left: 6 },
         valign: "middle",
         halign: "left"
       },
       bodyStyles: {
         minCellHeight: 22
+      },
+      didParseCell: (data: any) => {
+        if (data.section !== "body") return;
+
+        // Keep numeric area consistently aligned.
+        if ([4, 5].includes(data.column.index)) {
+          data.cell.styles.halign = "right";
+        }
+        if ([2, 3].includes(data.column.index)) {
+          data.cell.styles.halign = "center";
+        }
+
+        // Highlight total row for better visual alignment and readability.
+        const isTotalRow = String(data.row?.raw?.[1] || "").trim().toUpperCase() === "TOTAL";
+        if (isTotalRow && [1, 5].includes(data.column.index)) {
+          data.cell.styles.fontStyle = "bold";
+        }
       },
       columnStyles: {
         0: { cellWidth: 58, halign: "center" },
@@ -571,7 +580,7 @@ const OrderConfirmation: React.FC = () => {
               </div>
               <p className="text-sm font-semibold text-slate-700">{order.address}</p>
               {order.phone && (
-                <p className="mt-2 text-sm font-semibold text-slate-700">Contact: +{order.phone}</p>
+                <p className="mt-2 text-sm font-semibold text-slate-700">Contact: +91 {order.phone}</p>
               )}
         </div>
 

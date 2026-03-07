@@ -137,7 +137,7 @@ const Cart: React.FC = () => {
     }
     if (!shippingData.phone.trim()) errors.phone = "Please enter phone number";
     if (shippingData.phone && !isValidPhone(shippingData.phone)) {
-      errors.phone = "Please enter a valid phone number (10-15 digits)";
+      errors.phone = "Please enter a valid 10-digit phone number";
     }
     if (!shippingData.addressLine.trim())
       errors.addressLine = "Please enter address";

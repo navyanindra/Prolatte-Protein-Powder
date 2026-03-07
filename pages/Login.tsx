@@ -5,21 +5,40 @@ import { Mail, Lock, ArrowRight, Github, Chrome } from 'lucide-react';
 import { useGlobal } from '../App';
 import api from '../src/services/api';
 import { isValidEmail } from '../src/utils/validation';
+import AlertModal from '../src/components/AlertModal';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useGlobal();
   const navigate = useNavigate();
+  const [alertModal, setAlertModal] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error' | 'info';
+    title?: string;
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'info',
+    message: ''
+  });
+
+  const showAlert = (message: string, type: 'success' | 'error' | 'info' = 'error', title?: string) => {
+    setAlertModal({ isOpen: true, type, message, title });
+  };
+
+  const closeAlert = () => {
+    setAlertModal({ ...alertModal, isOpen: false });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      alert('Please enter both email and password.');
+      showAlert('Please enter both email and password.', 'error', 'Missing Credentials');
       return;
     }
     if (!isValidEmail(email)) {
-      alert('Please enter a valid email address.');
+      showAlert('Please enter a valid email address.', 'error', 'Invalid Email');
       return;
     }
 
@@ -42,7 +61,7 @@ const Login: React.FC = () => {
       navigate('/');
     } catch (err: any) {
       const message = err?.response?.data?.message || 'Login failed. Please check your details.';
-      alert(message);
+      showAlert(message, 'error', 'Login Failed');
     }
   };
 
@@ -118,6 +137,14 @@ const Login: React.FC = () => {
           </p>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={alertModal.isOpen}
+        onClose={closeAlert}
+        type={alertModal.type}
+        title={alertModal.title}
+        message={alertModal.message}
+      />
     </div>
   );
 };

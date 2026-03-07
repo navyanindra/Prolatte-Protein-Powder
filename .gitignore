@@ -14,6 +14,9 @@ dist-ssr
 .env
 .env.*
 
+# Old nested structure (moved to root)
+health-first-life-sciences/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
