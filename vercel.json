@@ -3,12 +3,6 @@
   "outputDirectory": "dist",
   "installCommand": "npm install --include=dev",
   "framework": "vite",
-  "functions": {
-    "api/*.cjs": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     {
       "source": "/api/:path*",
