@@ -1,14 +1,7 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import bcrypt from 'bcryptjs';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { createRequire } from 'module';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(import.meta.url);
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bcrypt = require('bcryptjs');
 
 // Database connection with caching for serverless
 let cachedDb = null;
@@ -20,7 +13,6 @@ async function connectDatabase() {
   }
 
   try {
-    // Use require for CommonJS modules
     const Product = require('../health-first-backend/health-first-backend/models/Product.js');
     const User = require('../health-first-backend/health-first-backend/models/User.js');
     
@@ -42,6 +34,7 @@ async function connectDatabase() {
           "High-quality doctor-recommended daily protein with added Vitamin K, B Complex, and Calcium. Perfect for muscle recovery and daily nutrition.",
         image: "/img1.png",
       });
+      console.log("✅ Default product seeded");
     }
 
     // Ensure admin exists
@@ -86,7 +79,7 @@ async function connectDatabase() {
   }
 }
 
-async function getApp() {
+function getApp() {
   if (app) return app;
   
   app = express();
@@ -108,7 +101,7 @@ async function getApp() {
 
   app.use(express.json());
 
-  // Use require for CommonJS route modules
+  // Load routes
   const authRoutes = require('../health-first-backend/health-first-backend/routes/auth.js');
   const productsRoutes = require('../health-first-backend/health-first-backend/routes/products.js');
   const ordersRoutes = require('../health-first-backend/health-first-backend/routes/orders.js');
@@ -122,7 +115,11 @@ async function getApp() {
   app.use("/api/payments", paymentsRoutes);
 
   app.get("/api", (req, res) => {
-    res.json({ message: "HealthFirst API Running 🚀", routes: ["auth", "products", "orders", "admin", "payments"] });
+    res.json({ 
+      message: "HealthFirst API Running 🚀", 
+      routes: ["auth", "products", "orders", "admin", "payments"],
+      timestamp: new Date().toISOString()
+    });
   });
 
   // Error handling
@@ -135,11 +132,11 @@ async function getApp() {
 }
 
 // Serverless function handler
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     await connectDatabase();
-    const expressApp = await getApp();
+    const expressApp = getApp();
     return expressApp(req, res);
   } catch (error) {
     console.error("Function error:", error);
@@ -149,4 +146,4 @@ export default async function handler(req, res) {
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
-}
+};
