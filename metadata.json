@@ -1,0 +1,9 @@
+
+{
+  "name": "Health First Life Sciences - ProLatte Platform",
+  "description": "A premium e-commerce platform for ProLatte Protein Powder featuring a complete shopping experience, user accounts, and an advanced admin dashboard.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
