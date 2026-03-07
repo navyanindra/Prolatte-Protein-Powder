@@ -4,7 +4,7 @@
   "installCommand": "npm install --include=dev",
   "framework": "vite",
   "functions": {
-    "api/*.js": {
+    "api/*.cjs": {
       "memory": 1024,
       "maxDuration": 10
     }
@@ -12,7 +12,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/api/index"
+      "destination": "/api/index.cjs"
     }
   ]
 }
