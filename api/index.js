@@ -1,7 +1,12 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const bcrypt = require("bcryptjs");
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import bcrypt from 'bcryptjs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Database connection with caching for serverless
 let cachedDb = null;
@@ -13,8 +18,9 @@ async function connectDatabase() {
   }
 
   try {
-    const Product = require("../health-first-backend/health-first-backend/models/Product");
-    const User = require("../health-first-backend/health-first-backend/models/User");
+    // Dynamic imports for models
+    const { default: Product } = await import('../health-first-backend/health-first-backend/models/Product.js');
+    const { default: User } = await import('../health-first-backend/health-first-backend/models/User.js');
     
     const db = await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 5000,
@@ -76,7 +82,7 @@ async function connectDatabase() {
   }
 }
 
-function getApp() {
+async function getApp() {
   if (app) return app;
   
   app = express();
@@ -98,12 +104,18 @@ function getApp() {
 
   app.use(express.json());
 
-  // Routes
-  app.use("/api/auth", require("../health-first-backend/health-first-backend/routes/auth"));
-  app.use("/api/products", require("../health-first-backend/health-first-backend/routes/products"));
-  app.use("/api/orders", require("../health-first-backend/health-first-backend/routes/orders"));
-  app.use("/api/admin", require("../health-first-backend/health-first-backend/routes/admin"));
-  app.use("/api/payments", require("../health-first-backend/health-first-backend/routes/payments"));
+  // Dynamic imports for routes
+  const { default: authRoutes } = await import('../health-first-backend/health-first-backend/routes/auth.js');
+  const { default: productsRoutes } = await import('../health-first-backend/health-first-backend/routes/products.js');
+  const { default: ordersRoutes } = await import('../health-first-backend/health-first-backend/routes/orders.js');
+  const { default: adminRoutes } = await import('../health-first-backend/health-first-backend/routes/admin.js');
+  const { default: paymentsRoutes } = await import('../health-first-backend/health-first-backend/routes/payments.js');
+
+  app.use("/api/auth", authRoutes);
+  app.use("/api/products", productsRoutes);
+  app.use("/api/orders", ordersRoutes);
+  app.use("/api/admin", adminRoutes);
+  app.use("/api/payments", paymentsRoutes);
 
   app.get("/api", (req, res) => {
     res.json({ message: "HealthFirst API Running 🚀" });
@@ -113,13 +125,13 @@ function getApp() {
 }
 
 // Serverless function handler
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
     await connectDatabase();
-    const expressApp = getApp();
+    const expressApp = await getApp();
     return expressApp(req, res);
   } catch (error) {
     console.error("Function error:", error);
     return res.status(500).json({ error: "Internal server error", message: error.message });
   }
-};
+}
