@@ -2,32 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
-require("dotenv").config();
-
-const Product = require("../health-first-backend/health-first-backend/models/Product");
-const User = require("../health-first-backend/health-first-backend/models/User");
-
-const app = express();
-app.disable("x-powered-by");
-
-app.use((req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "no-referrer");
-  next();
-});
-
-app.use(
-  cors({
-    origin: true, // Allow all origins in production, or configure specific domains
-    credentials: true,
-  })
-);
-
-app.use(express.json());
 
 // Database connection with caching for serverless
 let cachedDb = null;
+let app = null;
 
 async function connectDatabase() {
   if (cachedDb && mongoose.connection.readyState === 1) {
@@ -35,6 +13,9 @@ async function connectDatabase() {
   }
 
   try {
+    const Product = require("../health-first-backend/health-first-backend/models/Product");
+    const User = require("../health-first-backend/health-first-backend/models/User");
+    
     const db = await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
@@ -95,19 +76,50 @@ async function connectDatabase() {
   }
 }
 
-// Routes
-app.use("/api/auth", require("../health-first-backend/health-first-backend/routes/auth"));
-app.use("/api/products", require("../health-first-backend/health-first-backend/routes/products"));
-app.use("/api/orders", require("../health-first-backend/health-first-backend/routes/orders"));
-app.use("/api/admin", require("../health-first-backend/health-first-backend/routes/admin"));
-app.use("/api/payments", require("../health-first-backend/health-first-backend/routes/payments"));
+function getApp() {
+  if (app) return app;
+  
+  app = express();
+  app.disable("x-powered-by");
 
-app.get("/api", (req, res) => {
-  res.json({ message: "HealthFirst API Running 🚀" });
-});
+  app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    next();
+  });
+
+  app.use(
+    cors({
+      origin: true,
+      credentials: true,
+    })
+  );
+
+  app.use(express.json());
+
+  // Routes
+  app.use("/api/auth", require("../health-first-backend/health-first-backend/routes/auth"));
+  app.use("/api/products", require("../health-first-backend/health-first-backend/routes/products"));
+  app.use("/api/orders", require("../health-first-backend/health-first-backend/routes/orders"));
+  app.use("/api/admin", require("../health-first-backend/health-first-backend/routes/admin"));
+  app.use("/api/payments", require("../health-first-backend/health-first-backend/routes/payments"));
+
+  app.get("/api", (req, res) => {
+    res.json({ message: "HealthFirst API Running 🚀" });
+  });
+  
+  return app;
+}
 
 // Serverless function handler
 module.exports = async (req, res) => {
-  await connectDatabase();
-  return app(req, res);
+  try {
+    await connectDatabase();
+    const expressApp = getApp();
+    return expressApp(req, res);
+  } catch (error) {
+    console.error("Function error:", error);
+    return res.status(500).json({ error: "Internal server error", message: error.message });
+  }
 };
