@@ -607,4 +607,28 @@ router.get("/system", async (req, res) => {
   }
 });
 
+// Special endpoint to update product images (one-time migration)
+router.post("/migrate-product-images", async (req, res) => {
+  try {
+    const product = await Product.findOne({ name: "ProLatte Protein powder" });
+    
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.image = "/prolatte-left.png";
+    product.gallery = ["/prolatte-left.png", "/prolatte-right.png"];
+    
+    await product.save();
+    
+    res.json({ 
+      message: "Product images updated successfully",
+      product 
+    });
+  } catch (error) {
+    console.error("Migration failed", error);
+    res.status(500).json({ message: "Failed to update product images" });
+  }
+});
+
 module.exports = router;
