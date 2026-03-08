@@ -142,11 +142,9 @@ const Shop: React.FC = () => {
     galleryImages[selectedImageIndex] || product.image;
 
   const handleAddToCart = () => {
-    console.log('Adding to cart:', product.name, 'Quantity:', quantity);
     addToCart(product, 'Vanilla', quantity);
     setLastAddedQuantity(quantity);
     setShowCartToast(true);
-    console.log('Toast should show now:', true);
 
     if (cartToastTimeoutRef.current) {
       window.clearTimeout(cartToastTimeoutRef.current);
@@ -154,7 +152,6 @@ const Shop: React.FC = () => {
 
     cartToastTimeoutRef.current = window.setTimeout(() => {
       setShowCartToast(false);
-      console.log('Toast hidden');
     }, 2600);
   };
 
