@@ -616,8 +616,8 @@ router.post("/migrate-product-images", async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    product.image = "/prolatte-left.png";
-    product.gallery = ["/prolatte-left.png", "/prolatte-right.png"];
+    product.image = "/prolatte-front.png";
+    product.gallery = ["/prolatte-front.png", "/prolatte-back.png"];
     
     await product.save();
     
