@@ -17,63 +17,71 @@ async function connectDatabase() {
     const User = require('../health-first-backend/health-first-backend/models/User.js');
     
     const db = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 3000,
+      connectTimeoutMS: 3000,
+      socketTimeoutMS: 30000,
+      maxPoolSize: 10,
+      minPoolSize: 2,
     });
     
     cachedDb = db;
     console.log("✅ MongoDB Connected");
 
-    // Seed default product if needed
-    const count = await Product.countDocuments();
-    if (count === 0) {
-      await Product.create({
-        name: "ProLatte Protein powder",
-        price: 800,
-        stock: 50,
-        sku: "PROLATTE-500G",
-        weight: "500g",
-        description:
-          "High-quality doctor-recommended daily protein with added Vitamin K, B Complex, and Calcium. Perfect for muscle recovery and daily nutrition.",
-        image: "/prolatte-left.png",
-        gallery: ["/prolatte-left.png", "/prolatte-right.png"]
-      });
-      console.log("✅ Default product seeded");
-    }
-
-    // Ensure admin exists
-    const adminEmail = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
-    const adminPassword = String(process.env.ADMIN_PASSWORD || "");
-    if (adminEmail && adminPassword) {
-      const existingAdmin = await User.findOne({ email: adminEmail });
-      const hashedPassword = await bcrypt.hash(adminPassword, 10);
-
-      if (!existingAdmin) {
-        await User.create({
-          name: "Admin",
-          email: adminEmail,
-          password: hashedPassword,
-          role: "admin"
+    // Only seed on first cold start (when cache is empty)
+    if (!cachedDb.seeded) {
+      // Seed default product if needed
+      const count = await Product.countDocuments();
+      if (count === 0) {
+        await Product.create({
+          name: "ProLatte Protein powder",
+          price: 800,
+          stock: 50,
+          sku: "PROLATTE-500G",
+          weight: "500g",
+          description:
+            "High-quality doctor-recommended daily protein with added Vitamin K, B Complex, and Calcium. Perfect for muscle recovery and daily nutrition.",
+          image: "/prolatte-left.png",
+          gallery: ["/prolatte-left.png", "/prolatte-right.png"]
         });
-        console.log("✅ Admin user created");
-      } else {
-        let shouldSave = false;
-        if (existingAdmin.role !== "admin") {
-          existingAdmin.role = "admin";
-          shouldSave = true;
-        }
+        console.log("✅ Default product seeded");
+      }
 
-        const passwordMatches = await bcrypt.compare(adminPassword, existingAdmin.password || "");
-        if (!passwordMatches) {
-          existingAdmin.password = hashedPassword;
-          shouldSave = true;
-        }
+      // Ensure admin exists
+      const adminEmail = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+      const adminPassword = String(process.env.ADMIN_PASSWORD || "");
+      if (adminEmail && adminPassword) {
+        const existingAdmin = await User.findOne({ email: adminEmail });
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-        if (shouldSave) {
-          await existingAdmin.save();
-          console.log("✅ Admin user updated");
+        if (!existingAdmin) {
+          await User.create({
+            name: "Admin",
+            email: adminEmail,
+            password: hashedPassword,
+            role: "admin"
+          });
+          console.log("✅ Admin user created");
+        } else {
+          let shouldSave = false;
+          if (existingAdmin.role !== "admin") {
+            existingAdmin.role = "admin";
+            shouldSave = true;
+          }
+
+          const passwordMatches = await bcrypt.compare(adminPassword, existingAdmin.password || "");
+          if (!passwordMatches) {
+            existingAdmin.password = hashedPassword;
+            shouldSave = true;
+          }
+
+          if (shouldSave) {
+            await existingAdmin.save();
+            console.log("✅ Admin user updated");
+          }
         }
       }
+      
+      cachedDb.seeded = true;
     }
 
     return db;

@@ -96,8 +96,30 @@ const Shop: React.FC = () => {
 
   if (loading)
     return (
-      <div className="p-20 text-center text-gray-600">
-        Loading product...
+      <div className="bg-white min-h-screen pb-24">
+        <div className="max-w-7xl mx-auto px-4 pt-8">
+          <div className="h-6 w-32 bg-gray-200 rounded mb-8 animate-pulse" />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Image skeleton */}
+            <div>
+              <div className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="h-24 bg-gray-200 rounded-md animate-pulse" />
+                <div className="h-24 bg-gray-200 rounded-md animate-pulse" />
+                <div className="h-24 bg-gray-200 rounded-md animate-pulse" />
+              </div>
+            </div>
+            
+            {/* Content skeleton */}
+            <div className="space-y-6">
+              <div className="h-10 bg-gray-200 rounded animate-pulse w-3/4" />
+              <div className="h-12 bg-gray-200 rounded animate-pulse w-1/2" />
+              <div className="h-20 bg-gray-200 rounded animate-pulse" />
+              <div className="h-12 bg-gray-200 rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
       </div>
     );
 
