@@ -30,6 +30,11 @@ const productSchema = new mongoose.Schema(
 
     image: String,
 
+    gallery: {
+      type: [String],
+      default: []
+    },
+
     isActive: {
       type: Boolean,
       default: true

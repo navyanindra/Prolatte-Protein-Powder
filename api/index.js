@@ -30,9 +30,13 @@ async function connectDatabase() {
       await Product.create({
         name: "ProLatte Protein powder",
         price: 800,
+        stock: 50,
+        sku: "PROLATTE-500G",
+        weight: "500g",
         description:
           "High-quality doctor-recommended daily protein with added Vitamin K, B Complex, and Calcium. Perfect for muscle recovery and daily nutrition.",
-        image: "/img1.png",
+        image: "/prolatte-left.png",
+        gallery: ["/prolatte-left.png", "/prolatte-right.png"]
       });
       console.log("✅ Default product seeded");
     }
