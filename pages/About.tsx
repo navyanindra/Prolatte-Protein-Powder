@@ -16,7 +16,7 @@ const About: React.FC = () => {
       {/* Hero */}
       <section
         className="relative py-16 lg:py-20 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url("bg.png")' }}
+        style={{ backgroundImage: 'url("/bg.png")' }}
       >
         <div className="absolute inset-0 bg-white/40" />
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
