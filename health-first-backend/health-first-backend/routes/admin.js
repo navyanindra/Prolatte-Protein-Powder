@@ -617,7 +617,7 @@ router.post("/migrate-product-images", async (req, res) => {
     }
 
     product.image = "/prolatte-front.png";
-    product.gallery = ["/prolatte-front.png", "/prolatte-back.png"];
+    product.gallery = ["/prolatte-front.png", "/prolatte-left.png", "/prolatte-right.png"];
     
     await product.save();
     
