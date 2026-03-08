@@ -142,9 +142,11 @@ const Shop: React.FC = () => {
     galleryImages[selectedImageIndex] || product.image;
 
   const handleAddToCart = () => {
+    console.log('Adding to cart:', product.name, 'Quantity:', quantity);
     addToCart(product, 'Vanilla', quantity);
     setLastAddedQuantity(quantity);
     setShowCartToast(true);
+    console.log('Toast should show now:', true);
 
     if (cartToastTimeoutRef.current) {
       window.clearTimeout(cartToastTimeoutRef.current);
@@ -152,13 +154,14 @@ const Shop: React.FC = () => {
 
     cartToastTimeoutRef.current = window.setTimeout(() => {
       setShowCartToast(false);
+      console.log('Toast hidden');
     }, 2600);
   };
 
   return (
     <div className="bg-white min-h-screen pb-24">
       {showCartToast && (
-        <div className="fixed right-4 top-4 z-50">
+        <div className="fixed right-4 top-20 z-[9999]">
           <div className="bg-white border border-gray-200 shadow-lg rounded-xl px-4 py-3 min-w-[280px] max-w-[360px]">
             <div className="flex items-start gap-3">
               <CheckCircle2 size={20} className="text-green-600 mt-0.5" />
