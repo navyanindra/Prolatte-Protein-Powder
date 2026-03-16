@@ -585,21 +585,6 @@ const OrderConfirmation: React.FC = () => {
               )}
         </div>
 
-            {!isDemoMode && (
-              <div className="mt-6 rounded-2xl border border-slate-200 p-4">
-                <h3 className="mb-2 text-base font-black text-slate-900">Tax Details</h3>
-                <div className="space-y-1 text-sm text-slate-600">
-                  <p>
-                    Taxable Value: <span className="font-bold text-slate-800">{formatAmount(taxableAmount, 2)}</span>
-                  </p>
-                  <p>
-                    GST ({gstRate}% included):{" "}
-                    <span className="font-bold text-slate-800">{formatAmount(gstAmount, 2)}</span>
-                  </p>
-                </div>
-              </div>
-            )}
-
             <div className="mt-6 rounded-2xl border border-slate-200 p-4">
               <div className="mb-2 flex items-center text-slate-500">
                 <CalendarDays size={16} className="mr-2" />
