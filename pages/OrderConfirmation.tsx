@@ -342,14 +342,15 @@ const OrderConfirmation: React.FC = () => {
     const itemRows = order.items.map((item, idx) => {
       const qty = Number(item.quantity || 0);
       const rateIncl = getDiscountedPrice(item);
-      const amount = rateIncl * qty;
+      // Calculate amount WITHOUT GST for the AMOUNT column
+      const amountExclGST = (rateIncl * qty) / (1 + gstRate / 100);
       return [
         String(idx + 1),
         item.name,
         hsnCode,
         `${qty} JAR`,
         Number(rateIncl).toLocaleString("en-IN"),
-        formatRupee(amount)
+        formatRupee(amountExclGST)
       ];
     });
 
