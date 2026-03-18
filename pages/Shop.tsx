@@ -230,9 +230,44 @@ const Shop: React.FC = () => {
               )}
             </div>
 
-            <p className="text-gray-600">
-              {product.description}
+            <p className="text-gray-600 leading-relaxed">
+              This Daily Protein Supplement is designed for people who want to maintain overall health, strength, and vitality as part of their everyday lifestyle. Formulated with high-quality protein, it helps support muscle maintenance, energy levels, and post-activity recovery, making it suitable for adults of all ages. Ideal for individuals with increased protein needs, busy professionals, active adults, and those looking to improve their daily nutritional intake.
             </p>
+
+            {/* -------- PRODUCT DETAILS -------- */}
+            <div className="bg-gray-50 rounded-lg p-6 space-y-4 border border-gray-100">
+              <h3 className="font-bold text-gray-900 text-lg mb-3">Product Details</h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-sm text-gray-500">Brand</span>
+                  <p className="font-semibold text-gray-900">ProLatte</p>
+                </div>
+                <div>
+                  <span className="text-sm text-gray-500">Flavor</span>
+                  <p className="font-semibold text-gray-900">Vanilla</p>
+                </div>
+                <div>
+                  <span className="text-sm text-gray-500">Item Type</span>
+                  <p className="font-semibold text-gray-900">Protein Powder</p>
+                </div>
+                <div>
+                  <span className="text-sm text-gray-500">Age Range</span>
+                  <p className="font-semibold text-gray-900">Adult</p>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-gray-200">
+                <span className="text-sm text-gray-500 block mb-2">Product Benefits</span>
+                <div className="flex flex-wrap gap-2">
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">Bone Strength</span>
+                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Energy Management</span>
+                  <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">Immune Support</span>
+                  <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold">Meal Replacement</span>
+                  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Muscle Growth</span>
+                </div>
+              </div>
+            </div>
 
             {/* -------- QUANTITY + ADD -------- */}
             <div className="flex items-center gap-4 pt-4">
