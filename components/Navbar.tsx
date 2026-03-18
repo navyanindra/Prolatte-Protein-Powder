@@ -41,7 +41,15 @@ const Navbar: React.FC = () => {
             {user ? (
               <div className="relative group">
                 <button className="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded-full transition">
-                  <img src={user.avatar} className="w-8 h-8 rounded-full bg-gray-200" alt="Profile" />
+                  <img 
+                    src={user.avatar} 
+                    className="w-8 h-8 rounded-full bg-gray-200 object-cover border-2 border-gray-200" 
+                    alt="Profile" 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.email)}`;
+                    }}
+                  />
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 shadow-lg rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
                   <Link to="/profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">

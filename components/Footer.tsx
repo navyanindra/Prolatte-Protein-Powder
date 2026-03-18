@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-bold mb-4">Our Product</h4>
             <ul className="space-y-3 text-gray-400">
               <li>
-                <a href="https://www.amazon.in/s?k=ProLatte+HealthFirst" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition">
+                <a href="https://amzn.in/d/02diXqyS" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition">
                   <img src="/amazon_icon.png" alt="Amazon" className="h-6 w-auto object-contain" />
                   <span>Buy on Amazon</span>
                 </a>
