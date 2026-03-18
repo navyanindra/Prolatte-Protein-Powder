@@ -240,16 +240,8 @@ const Shop: React.FC = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-sm text-gray-500">Brand</span>
-                  <p className="font-semibold text-gray-900">ProLatte</p>
-                </div>
-                <div>
                   <span className="text-sm text-gray-500">Flavor</span>
                   <p className="font-semibold text-gray-900">Vanilla</p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-500">Item Type</span>
-                  <p className="font-semibold text-gray-900">Protein Powder</p>
                 </div>
                 <div>
                   <span className="text-sm text-gray-500">Age Range</span>
@@ -261,9 +253,7 @@ const Shop: React.FC = () => {
                 <span className="text-sm text-gray-500 block mb-2">Product Benefits</span>
                 <div className="flex flex-wrap gap-2">
                   <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">Bone Strength</span>
-                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Energy Management</span>
                   <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">Immune Support</span>
-                  <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold">Meal Replacement</span>
                   <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Muscle Growth</span>
                 </div>
               </div>
