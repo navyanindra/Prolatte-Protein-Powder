@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: process.env.NODE_ENV === 'production' 
       ? ['https://healthfirstlifesciences.com', 'https://www.healthfirstlifesciences.com', 'https://*.vercel.app']
-      : 'http://localhost:3000',
+      : ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
   })
 );

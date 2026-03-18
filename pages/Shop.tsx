@@ -61,9 +61,7 @@ const Shop: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [showCartToast, setShowCartToast] = useState(false);
-  const [lastAddedQuantity, setLastAddedQuantity] = useState(1);
-  const cartToastTimeoutRef = useRef<number | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -84,14 +82,6 @@ const Shop: React.FC = () => {
     };
 
     fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (cartToastTimeoutRef.current) {
-        window.clearTimeout(cartToastTimeoutRef.current);
-      }
-    };
   }, []);
 
   if (loading)
@@ -143,43 +133,33 @@ const Shop: React.FC = () => {
 
   const handleAddToCart = () => {
     addToCart(product, 'Vanilla', quantity);
-    setLastAddedQuantity(quantity);
-    setShowCartToast(true);
-
-    if (cartToastTimeoutRef.current) {
-      window.clearTimeout(cartToastTimeoutRef.current);
-    }
-
-    cartToastTimeoutRef.current = window.setTimeout(() => {
-      setShowCartToast(false);
-    }, 2600);
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
   };
 
   return (
     <div className="bg-white min-h-screen pb-24">
-      {showCartToast && (
-        <div className="fixed right-4 top-20 z-[9999]">
-          <div className="bg-white border border-gray-200 shadow-lg rounded-xl px-4 py-3 min-w-[280px] max-w-[360px]">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 size={20} className="text-green-600 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-900">
-                  Added to cart
-                </p>
-                <p className="text-xs text-gray-600 mt-0.5">
-                  {lastAddedQuantity} item{lastAddedQuantity > 1 ? 's' : ''} added successfully.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowCartToast(false)}
-                className="text-gray-400 hover:text-gray-700 transition-colors"
-                aria-label="Close cart notification"
-              >
-                <X size={16} />
-              </button>
-            </div>
+      {/* Cart Success Toast */}
+      {showToast && (
+        <div 
+          className="fixed top-24 right-6 z-[99999] bg-white border-2 border-green-500 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-4 animate-in slide-in-from-right"
+          style={{ minWidth: '320px' }}
+        >
+          <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+            <CheckCircle2 size={24} className="text-green-600" />
           </div>
+          <div className="flex-1">
+            <p className="font-bold text-gray-900 text-base">Added to cart!</p>
+            <p className="text-sm text-gray-600">{quantity} item{quantity > 1 ? 's' : ''} added successfully</p>
+          </div>
+          <button 
+            onClick={() => setShowToast(false)}
+            className="flex-shrink-0 text-gray-400 hover:text-gray-600"
+          >
+            <X size={20} />
+          </button>
         </div>
       )}
 
