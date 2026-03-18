@@ -299,28 +299,23 @@ const Shop: React.FC = () => {
             </div>
 
             {/* -------- ALSO AVAILABLE ON -------- */}
-            <div className="mt-6 bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl p-5">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🛒</span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 mb-2">Also Available On</h3>
-                  <p className="text-sm text-gray-600 mb-3">Get the best price and fast delivery on Amazon!</p>
-                  <a 
-                    href="https://amzn.in/d/02diXqyS" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-400 to-yellow-500 text-white px-5 py-2.5 rounded-lg font-bold hover:shadow-lg transition-all hover:scale-105"
-                  >
-                    <img src="/amazon_icon.png" alt="Amazon" className="h-5 w-auto object-contain brightness-0 invert" />
-                    <span>Buy on Amazon</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
-                </div>
+            <div className="mt-6 border border-gray-200 rounded-xl p-5 bg-white hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Also Available On</h3>
               </div>
+              <p className="text-sm text-gray-600 mb-4">Get fast delivery and exclusive deals</p>
+              <a 
+                href="https://amzn.in/d/02diXqyS" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 bg-[#FF9900] hover:bg-[#FFA724] text-white px-6 py-3 rounded-lg font-semibold transition-all hover:shadow-lg w-full"
+              >
+                <img src="/amazon_icon.png" alt="Amazon" className="h-5 w-auto object-contain brightness-0 invert" />
+                <span>Shop on Amazon</span>
+                <svg className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
             </div>
 
           </div>
